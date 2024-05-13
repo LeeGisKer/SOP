@@ -1,13 +1,14 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import pymysql
+
 app=Flask(__name__)
 app.secret_key='8563'
 
 def get_db_connection():
-    connection = pymysql.connector.connect(host='192.168.0.10',
+    connection = pymysql.connect(host='192.168.0.10',
                                          user='leegisker',
                                          password='8563',
-                                         db='sop',
+                                         db='SOP',
                                          charset='utf8mb4',
                                          cursorclass=pymysql.cursors.DictCursor)
     return connection
@@ -16,7 +17,7 @@ def get_db_connection():
 def index():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM sop')
+    cursor.execute('SELECT * FROM SOP')
     items = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -26,7 +27,7 @@ def index():
 def get_password():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM sop')
+    cursor.execute('SELECT * FROM SOP')
     passwords = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -35,14 +36,13 @@ def get_password():
 @app.route('/login',methods=['GET','POST'])
 def login():
     if request.method=='POST':
-        
         username = request.form['username']
         password = request.form['password']
         if username == 'usuario_predeterminado' and password == 'contraseña_predeterminada':
             session['logged_in']=True
-            return redirect(url_for('managepasswords'))
+            return redirect(url_for('show_passwords'))
         else:
-            return 'Credenciales incorrectas'
+            return render_template('login.html', error='Credenciales incorrectas')
     return render_template('login.html')
 
 
@@ -68,7 +68,7 @@ def add_password():
         cursor.close()
         conn.close()
         return redirect(url_for('show_passwords'))
-    return redender_template('add_password.html')
+    return render_template('add_password.html')
 
 @app.route('/show_passwords')
 def show_passwords():
