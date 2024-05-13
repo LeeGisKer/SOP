@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask_bcrypt import Bcrypt
 import pymysql
 
 app=Flask(__name__)
+Bcrypt = Bcrypt(app)
 app.secret_key='8563'
 
 def get_db_connection():
@@ -13,15 +15,30 @@ def get_db_connection():
                                          cursorclass=pymysql.cursors.DictCursor)
     return connection
 
+ 
+
 @app.route('/')
 def index():
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM SOP')
-    items = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return render_template('index.html', items=items)
+    if conn:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT * FROM SOP')
+                items = cursor.fetchall()
+                return render_template('index.html', items=items)
+        except pymysql.Error as e:
+            app.logger.error(f"ERROR: {e}")
+            return render_template('error.html')
+        finally:
+            conn.close()
+    else:
+        return render_template('error.html')
+    
+    
+    
+    
+    
+   
 
 @app.route('/api/password', methods=['GET'])
 def get_password():
@@ -54,17 +71,31 @@ def logout():
 def add_password():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    if request.method=='POST':
-        website = request.form['website']
-        password = request.form['password']
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO passwords (website, password) VALUES (%s, %s)', (website, password))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('show_passwords'))
-    return render_template('add_password.html')
+    
+    website = request.form['website']
+    password = request.form['password']
+    
+    if not website or not password:
+        return render_template('error.html',message='Todos los campos son obligatorios')
+    
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    conn = get_db_connection()
+    if conn:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('INSERT INTO passwords (website, password) VALUES (%s, %s)', (website, hashed_password))
+                conn.commit()
+                return redirect(url_for('show_passwords'))
+        except pymysql.Error as e:
+            app.logger.error(f"ERROR: {e}")
+            return render_template('error.html')
+        finally:
+            conn.close()
+    else:
+        return render_template('error.html')
+    
+    
 
 @app.route('/show_passwords')
 def show_passwords():

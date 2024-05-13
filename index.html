@@ -1,8 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MPF</title>
-    </head>
-</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPF</title>
+    <style>
+
+    </style>
+</head>
+<body>  
+    <h1>MPF - Contraseñas Guardadas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Sitio Web</th>
+                <th>Contraseña</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.website }}</td>
+                <td>{{ item.password }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <a href="/add_password.html">Agregar Contraseña</a>
+    <br>
+    <a href="/logout">Cerrar Sesion</a>
+</body>
