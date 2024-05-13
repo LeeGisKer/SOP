@@ -35,15 +35,11 @@ def get_password():
 
 @app.route('/login',methods=['GET','POST'])
 def login():
-    if request.method=='POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == 'usuario_predeterminado' and password == 'contraseña_predeterminada':
-            session['logged_in']=True
-            return redirect(url_for('show_passwords'))
-        else:
-            return render_template('login.html', error='Credenciales incorrectas')
-    return render_template('login.html')
+    if request.method=='POST' and request.form['username']=='usuario_predeterminado' and request.form['password']=='contraseña_predeterminada':
+        session['logged_in']=True
+        return redirect(url_for('show_passwords'))
+    return render_template('login.html', error=request.method=='POST')
+
 
 
     
@@ -82,6 +78,19 @@ def show_passwords():
     conn.close()
     return render_template('show_passwords.html', passwords=passwords)
     
+try:
+    conn=get_db_connection()
+    cursor=conn.cursor()
+    cursor.execute('SELECT * FROM SOP')
+    items=cursor.fetchall()
+except Exception as e:
+    print(f"ERROR: {e}")
+    items=[]
+finally:
+    cursor.close()
+        
+    
+ 
         
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=8080 )
