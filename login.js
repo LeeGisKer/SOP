@@ -9,8 +9,3 @@ function ValidarUsuario() {
   
     return true;
   }
-
-
-function redireccionarPagInicio() {
-    window.location.href = "PagInicio.html";
-}
