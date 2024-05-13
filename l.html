@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Formulario de inicio</title>
+	<link rel="stylesheet" type="text/css" href="login.css">
+	<script src="login.js" defer></script>
+</head>
+<body>
+	<div class="contenedor">
+
+		<div>
+			<p>Inicia sesión para continuar</p>
+		</div>
+
+		<form action="" class="formulario" id="formulario" name="formulario" onsubmit="return ValidarUsuario()">
+			<div class="contenedor-inputs">
+			
+
+				<div class="wawa">
+					Usuario<input type="text" name="direccion" id="usuario" placeholder="Username123">
+
+                    Contraseña<input type="password" name="password" id="contraseña" placeholder="Contraseña">
+				</div>
+				
+				<!--<ul class="error" id="error"></ul>-->
+			</div>
+
+			<input type="submit" class="btn" value="Iniciar sesión">
+		</form>
+	</div>
+
+<script>
+	ValidarUsuario();
+</script>
+	
+</body>
+</html>
