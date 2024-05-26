@@ -7,7 +7,7 @@ Bcrypt = Bcrypt(app)
 app.secret_key='8563'
 
 def get_db_connection():
-    connection = pymysql.connect(host='192.168.0.10',
+    connection = pymysql.connect(host='192.168.243.48',
                                          user='leegisker',
                                          password='8563',
                                          db='SOP',
