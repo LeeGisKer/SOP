@@ -11,14 +11,17 @@ app.secret_key = 'supersecretkey'
 
 def get_db_connection():
     connection = pymysql.connect(
-        host=os.getenv('172.19.168.80'),
-        user=os.getenv('LeeGisKer'),
-        password=os.getenv('28sylaxl'),
-        db=os.getenv('password_manager'),
+        host='localhost',  # Connect to the local port forwarded by SSH
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        db=os.getenv('DB_NAME'),
+        port=3306,  # Local port forwarded to the remote database port
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
     return connection
+
+
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
