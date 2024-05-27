@@ -4,17 +4,17 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 def get_db_connection():
     connection = pymysql.connect(
-        host='172.19.168.80',
-        user='leegisker',
-        password='28sylaxl',
-        db='password_manager',
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        db=os.getenv('DB_NAME'),
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
@@ -158,4 +158,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-
