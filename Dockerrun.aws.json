@@ -1,12 +1,13 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-      "Name": "sop-web",
+      "Name": "leegisker/passmanager",
       "Update": "true"
     },
     "Ports": [
       {
-        "ContainerPort": "5000"
+        "ContainerPort": 8000,
+        "HostPort": 8000
       }
     ]
   }

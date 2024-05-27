@@ -5,3 +5,4 @@ wtforms
 werkzeug
 cryptography
 email_validator
+gunicorn

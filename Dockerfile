@@ -1,17 +1,18 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.9-slim
+# Usa una imagen base de Python
+FROM python:3.11-slim
 
-# Set the working directory in the container
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt .
+# Copia el archivo de requisitos y luego instala las dependencias
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code into the container
+# Copia el contenido de la aplicación en el contenedor
 COPY . .
 
-# Specify the command to run the application
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+# Expone el puerto en el que correrá la aplicación
+EXPOSE 8000
+
+# Define el comando de inicio
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
