@@ -10,7 +10,7 @@ app.secret_key = 'supersecretkey'
 
 def get_db_connection():
     connection = pymysql.connect(
-        host='172.19.168.80',  # Reemplaza con la IP correcta de tu máquina
+        host='172.19.168.80',
         user='leegisker',
         password='28sylaxl',
         db='password_manager',
@@ -157,3 +157,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
+

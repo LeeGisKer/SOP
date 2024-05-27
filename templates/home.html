@@ -4,63 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        p {
-            margin-bottom: 15px;
-        }
-        a {
-            text-decoration: none;
-            color: #007BFF;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .logout {
-            display: flex;
-            justify-content: flex-end;
-        }
-        .logout form {
-            display: inline;
-        }
-        .btn {
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <div class="logout">
-            <form action="{{ url_for('logout') }}" method="post">
-                <button type="submit" class="btn">Logout</button>
-            </form>
-        </div>
-        <h1>Welcome to the Home Page</h1>
-        <p><a href="{{ url_for('register_account') }}">Register New Account</a></p>
-        <p><a href="{{ url_for('view_accounts') }}">View Accounts</a></p>
+        <h1>Welcome to Password Manager</h1>
+        <a href="{{ url_for('register_account') }}" class="btn">Register Account</a>
+        <a href="{{ url_for('view_accounts') }}" class="btn">View Accounts</a>
+        <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+            <button type="submit" class="btn logout">Logout</button>
+        </form>
     </div>
 </body>
 </html>
