@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Accounts</title>
+</head>
+<body>
+    <h2>Stored Accounts</h2>
+    <ul>
+        {% for account in accounts %}
+        <li>{{ account.website }} - {{ account.username }} - {{ account.password }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('home') }}">Back to Home</a>
+</body>
+</html>

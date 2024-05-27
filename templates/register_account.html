@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Account</title>
+</head>
+<body>
+    <h2>Register Account</h2>
+    <form action="/register_account" method="post">
+        <label for="website">Website:</label>
+        <input type="text" id="website" name="website" required><br>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <input type="submit" value="Register">
+    </form>
+    {% if error %}
+    <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    <a href="{{ url_for('home') }}">Back to Home</a>
+</body>
+</html>
