@@ -4,84 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Accounts</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .btn {
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .back-home {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .back-home a {
-            color: #007BFF;
-            text-decoration: none;
-        }
-        .back-home a:hover {
-            text-decoration: underline;
-        }
-    </style>
-    <script>
-        function togglePassword(id) {
-            var passwordField = document.getElementById(id);
-            var toggleBtn = document.getElementById('toggle-' + id);
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleBtn.textContent = 'Hide';
-            } else {
-                passwordField.type = 'password';
-                toggleBtn.textContent = 'Show';
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>View Accounts</h1>
-        <table>
+        <h2>View Accounts</h2>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Website</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Password</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -91,16 +29,33 @@
                     <td>{{ account.username }}</td>
                     <td>{{ account.email }}</td>
                     <td>
-                        <input type="password" id="password-{{ loop.index }}" value="{{ account.password }}" readonly>
-                        <button class="btn" id="toggle-password-{{ loop.index }}" onclick="togglePassword('password-{{ loop.index }}')">Show</button>
+                        <input type="password" value="{{ account.password }}" readonly>
+                        <button class="btn btn-secondary btn-sm" onclick="togglePassword(this)">Show</button>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('edit_account', account_id=account.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                        <form action="{{ url_for('delete_account', account_id=account.id) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <div class="back-home">
-            <a href="{{ url_for('home') }}">Back to Home</a>
-        </div>
+        <a href="{{ url_for('home') }}">Back to Home</a>
     </div>
+
+    <script>
+        function togglePassword(button) {
+            var input = button.previousElementSibling;
+            if (input.type === "password") {
+                input.type = "text";
+                button.textContent = "Hide";
+            } else {
+                input.type = "password";
+                button.textContent = "Show";
+            }
+        }
+    </script>
 </body>
 </html>

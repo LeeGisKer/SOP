@@ -7,7 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
-app.config['WTF_CSRF_ENABLED'] = False  # Desactivar CSRF
 
 def get_db_connection():
     connection = pymysql.connect(
@@ -89,12 +88,10 @@ def register_account():
         email = request.form['email']
         password = request.form['password']
         
-        hashed_password = generate_password_hash(password)
-        
         connection = get_db_connection()
         with connection.cursor() as cursor:
             cursor.execute("INSERT INTO passwords (user_id, website, username, email, password) VALUES (%s, %s, %s, %s, %s)",
-                           (session['user_id'], website, username, email, hashed_password))
+                           (session['user_id'], website, username, email, password))
             connection.commit()
         connection.close()
         return redirect(url_for('home'))
@@ -107,11 +104,51 @@ def view_accounts():
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
-        cursor.execute("SELECT website, username, email, password FROM passwords WHERE user_id=%s", (session['user_id'],))
+        cursor.execute("SELECT * FROM passwords WHERE user_id=%s", (session['user_id'],))
         accounts = cursor.fetchall()
     connection.close()
-
     return render_template('view_accounts.html', accounts=accounts)
+
+@app.route('/edit_account/<int:account_id>', methods=['GET', 'POST'])
+def edit_account(account_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM passwords WHERE id=%s AND user_id=%s", (account_id, session['user_id']))
+        account = cursor.fetchone()
+    
+    if request.method == 'POST':
+        website = request.form['website']
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE passwords 
+                SET website=%s, username=%s, email=%s, password=%s 
+                WHERE id=%s AND user_id=%s
+            """, (website, username, email, password, account_id, session['user_id']))
+            connection.commit()
+        connection.close()
+        return redirect(url_for('view_accounts'))
+    
+    connection.close()
+    return render_template('edit_account.html', account=account)
+
+@app.route('/delete_account/<int:account_id>', methods=['POST'])
+def delete_account(account_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM passwords WHERE id=%s AND user_id=%s", (account_id, session['user_id']))
+        connection.commit()
+    connection.close()
+    return redirect(url_for('view_accounts'))
 
 @app.route('/logout', methods=['POST'])
 def logout():
