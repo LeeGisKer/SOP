@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, Email, EqualTo
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
@@ -156,5 +157,5 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080)
 

@@ -1,0 +1,7 @@
+Flask
+flask-wtf
+pymysql
+wtforms
+werkzeug
+cryptography
+email_validator
