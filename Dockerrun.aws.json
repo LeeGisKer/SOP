@@ -1,14 +1,13 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-      "Name": "leegisker/passmanager",
+      "Name": "",
       "Update": "true"
     },
     "Ports": [
       {
         "ContainerPort": "8000"
       }
-    ],
-    "Logging": "/var/log/nginx"
+    ]
   }
   
