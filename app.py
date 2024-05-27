@@ -11,10 +11,10 @@ app.secret_key = 'supersecretkey'
 
 def get_db_connection():
     connection = pymysql.connect(
-        host=os.getenv('DB_HOST'),
-        user=os.getenv('DB_USER'),
-        password=os.getenv('DB_PASSWORD'),
-        db=os.getenv('DB_NAME'),
+        host=os.getenv('172.19.168.80'),
+        user=os.getenv('LeeGisKer'),
+        password=os.getenv('28sylaxl'),
+        db=os.getenv('password_manager'),
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
