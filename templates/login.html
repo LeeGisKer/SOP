@@ -4,21 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .btn {
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form action="/login" method="post">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <input type="submit" value="Login">
-    </form>
-    <form action="/register" method="get">
-        <input type="submit" value="Create an Account">
-    </form>
-    {% if error %}
-    <p style="color:red;">{{ error }}</p>
-    {% endif %}
+    <div class="container">
+        <h1>Login</h1>
+        <form action="{{ url_for('login') }}" method="post">
+            <input type="text" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <button type="submit" class="btn">Login</button>
+        </form>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        <p style="text-align:center;"><a href="{{ url_for('register') }}">Create an Account</a></p>
+    </div>
 </body>
 </html>

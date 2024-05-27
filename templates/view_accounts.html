@@ -4,14 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Accounts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-home a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function togglePassword(id) {
+            var passwordField = document.getElementById(id);
+            var toggleBtn = document.getElementById('toggle-' + id);
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleBtn.textContent = 'Hide';
+            } else {
+                passwordField.type = 'password';
+                toggleBtn.textContent = 'Show';
+            }
+        }
+    </script>
 </head>
 <body>
-    <h2>Stored Accounts</h2>
-    <ul>
-        {% for account in accounts %}
-        <li>{{ account.website }} - {{ account.username }} - {{ account.password }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('home') }}">Back to Home</a>
+    <div class="container">
+        <h1>View Accounts</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Website</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>{{ account.website }}</td>
+                    <td>{{ account.username }}</td>
+                    <td>{{ account.email }}</td>
+                    <td>
+                        <input type="password" id="password-{{ loop.index }}" value="{{ account.password }}" readonly>
+                        <button class="btn" id="toggle-password-{{ loop.index }}" onclick="togglePassword('password-{{ loop.index }}')">Show</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="back-home">
+            <a href="{{ url_for('home') }}">Back to Home</a>
+        </div>
+    </div>
 </body>
 </html>
