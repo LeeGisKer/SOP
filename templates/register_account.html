@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Account</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Register Account</h1>
-        <form action="{{ url_for('register_account') }}" method="post">
-            <input type="text" name="website" placeholder="Website" required>
-            <input type="text" name="username" placeholder="Username" required>
+        <h1>Register</h1>
+        <form action="{{ url_for('register') }}" method="post">
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
             <button type="submit" class="btn">Register</button>
         </form>
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
-        <div class="back-home">
-            <a href="{{ url_for('home') }}">Back to Home</a>
-        </div>
+        <p class="back-home"><a href="{{ url_for('login') }}">Back to Login</a></p>
     </div>
 </body>
 </html>

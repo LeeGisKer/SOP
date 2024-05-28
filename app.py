@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
@@ -21,22 +21,6 @@ def get_db_connection():
     )
     return connection
 
-@app.route('/test-db-connection')
-def test_db_connection():
-    try:
-        connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-            result = cursor.fetchone()
-        connection.close()
-        return f"Connected to the database, result: {result}"
-    except pymysql.MySQLError as e:
-        return f"Error connecting to the database: {str(e)}"
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
-
-
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -56,16 +40,17 @@ def login():
         email = request.form['email']
         password = request.form['password']
         connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-            user = cursor.fetchone()
-        connection.close()
-        
-        if user and check_password_hash(user['password'], password):
-            session['user_id'] = user['id']
-            return redirect(url_for('home'))
-        else:
-            error = 'Invalid email or password'
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+                user = cursor.fetchone()
+                if user and check_password_hash(user['password'], password):
+                    session['user_id'] = user['id']
+                    return redirect(url_for('home'))
+                else:
+                    error = 'Invalid email or password'
+        finally:
+            connection.close()
     return render_template('login.html', error=error)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -76,19 +61,22 @@ def register():
         email = form.email.data
         password = form.password.data
         hashed_password = generate_password_hash(password)
-        
         connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-            user = cursor.fetchone()
-            
-            if user:
-                error = 'Email already registered'
-            else:
-                cursor.execute("INSERT INTO users (email, password) VALUES (%s, %s)", (email, hashed_password))
-                connection.commit()
-                return redirect(url_for('login'))
-        connection.close()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+                user = cursor.fetchone()
+                if user:
+                    error = 'Email already registered'
+                else:
+                    cursor.execute("INSERT INTO users (email, password) VALUES (%s, %s)", (email, hashed_password))
+                    connection.commit()
+                    flash('Registration successful! Please login.', 'success')
+                    return redirect(url_for('login'))
+        except pymysql.MySQLError as e:
+            error = f"An error occurred: {e}"
+        finally:
+            connection.close()
     return render_template('register.html', form=form, error=error)
 
 @app.route('/home')
@@ -107,12 +95,16 @@ def register_account():
         password = request.form['password']
         
         connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO passwords (user_id, website, username, email, password) VALUES (%s, %s, %s, %s, %s)",
-                           (session['user_id'], website, username, email, password))
-            connection.commit()
-        connection.close()
-        return redirect(url_for('home'))
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO passwords (user_id, website, username, email, password) VALUES (%s, %s, %s, %s, %s)",
+                               (session['user_id'], website, username, email, password))
+                connection.commit()
+                return redirect(url_for('home'))
+        except pymysql.MySQLError as e:
+            error = f"An error occurred: {e}"
+        finally:
+            connection.close()
     return render_template('register_account.html', error=error)
 
 @app.route('/view_accounts')
@@ -143,35 +135,29 @@ def edit_account(account_id):
         email = request.form['email']
         password = request.form['password']
         
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("UPDATE passwords SET website=%s, username=%s, email=%s, password=%s WHERE id=%s AND user_id=%s",
+                               (website, username, email, password, account_id, session['user_id']))
+                connection.commit()
+                return redirect(url_for('view_accounts'))
+        except pymysql.MySQLError as e:
+            error = f"An error occurred: {e}"
+        finally:
+            connection.close()
+    return render_template('edit_account.html', account=account, error=error)
+
+@app.route('/test-db-connection')
+def test_db_connection():
+    try:
+        connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute("""
-                UPDATE passwords 
-                SET website=%s, username=%s, email=%s, password=%s 
-                WHERE id=%s AND user_id=%s
-            """, (website, username, email, password, account_id, session['user_id']))
-            connection.commit()
+            cursor.execute("SELECT 1")
+            result = cursor.fetchone()
         connection.close()
-        return redirect(url_for('view_accounts'))
-    
-    connection.close()
-    return render_template('edit_account.html', account=account)
+        return f"Connected to the database, result: {result}"
+    except pymysql.MySQLError as e:
+        return f"Error connecting to the database: {str(e)}"
 
-@app.route('/delete_account/<int:account_id>', methods=['POST'])
-def delete_account(account_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    connection = get_db_connection()
-    with connection.cursor() as cursor:
-        cursor.execute("DELETE FROM passwords WHERE id=%s AND user_id=%s", (account_id, session['user_id']))
-        connection.commit()
-    connection.close()
-    return redirect(url_for('view_accounts'))
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.pop('user_id', None)
-    return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000,debug=True)
