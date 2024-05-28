@@ -14,13 +14,13 @@ services:
       - my_network
 
   db:
-    image: mariadb
+    image: mysql:latest
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: karaxl28
-      MARIADB_DATABASE: password_manager
-      MARIADB_USER: leegisker
-      MARIADB_PASSWORD: 28sylaxl
+      MYSQL_ROOT_PASSWORD: karaxl28
+      MYSQL_DATABASE: password_manager
+      MYSQL_USER: leegisker
+      MYSQL_PASSWORD: 28sylaxl
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
