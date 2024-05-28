@@ -11,16 +11,30 @@ app.secret_key = 'supersecretkey'
 
 def get_db_connection():
     connection = pymysql.connect(
-        host='localhost',  # Connect to the local port forwarded by SSH
-        user=os.getenv('DB_USER'),
-        password=os.getenv('DB_PASSWORD'),
-        db=os.getenv('DB_NAME'),
-        port=3306,  # Local port forwarded to the remote database port
+        host='db',  
+        user='leegisker',  
+        password='28sylaxl',  
+        db='password_manager',  
+        port=3306,  
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
     return connection
 
+@app.route('/test-db-connection')
+def test_db_connection():
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            result = cursor.fetchone()
+        connection.close()
+        return f"Connected to the database, result: {result}"
+    except pymysql.MySQLError as e:
+        return f"Error connecting to the database: {str(e)}"
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
 
 
 class RegistrationForm(FlaskForm):

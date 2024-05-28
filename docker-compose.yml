@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   web:
     build: .
@@ -7,3 +8,33 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: karaxl28
+      MARIADB_DATABASE: password_manager
+      MARIADB_USER: leegisker
+      MARIADB_PASSWORD: 28sylaxl
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - my_network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - my_network
+
+networks:
+  my_network: 
+    driver: bridge
