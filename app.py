@@ -68,15 +68,20 @@ def register():
                 user = cursor.fetchone()
                 if user:
                     error = 'Email already registered'
+                    print(f"Registration error: {error}")  # Debugging statement
                 else:
                     cursor.execute("INSERT INTO users (email, password) VALUES (%s, %s)", (email, hashed_password))
                     connection.commit()
                     flash('Registration successful! Please login.', 'success')
+                    print(f"User {email} registered successfully.")  # Debugging statement
                     return redirect(url_for('login'))
         except pymysql.MySQLError as e:
             error = f"An error occurred: {e}"
+            print(f"Database error: {error}")  # Debugging statement
         finally:
             connection.close()
+    else:
+        print(f"Form validation error: {form.errors}")  # Debugging statement
     return render_template('register.html', form=form, error=error)
 
 @app.route('/home')
@@ -100,9 +105,11 @@ def register_account():
                 cursor.execute("INSERT INTO passwords (user_id, website, username, email, password) VALUES (%s, %s, %s, %s, %s)",
                                (session['user_id'], website, username, email, password))
                 connection.commit()
+                print(f"Account for {website} registered successfully.")  # Debugging statement
                 return redirect(url_for('home'))
         except pymysql.MySQLError as e:
             error = f"An error occurred: {e}"
+            print(f"Database error: {error}")  # Debugging statement
         finally:
             connection.close()
     return render_template('register_account.html', error=error)
@@ -140,12 +147,16 @@ def edit_account(account_id):
                 cursor.execute("UPDATE passwords SET website=%s, username=%s, email=%s, password=%s WHERE id=%s AND user_id=%s",
                                (website, username, email, password, account_id, session['user_id']))
                 connection.commit()
+                print(f"Account {account_id} updated successfully.")  # Debugging statement
                 return redirect(url_for('view_accounts'))
         except pymysql.MySQLError as e:
             error = f"An error occurred: {e}"
+            print(f"Database error: {error}")  # Debugging statement
         finally:
             connection.close()
     return render_template('edit_account.html', account=account, error=error)
+
+
 
 @app.route('/test-db-connection')
 def test_db_connection():
@@ -160,4 +171,8 @@ def test_db_connection():
         return f"Error connecting to the database: {str(e)}"
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000)
+
+    
+    
+    
