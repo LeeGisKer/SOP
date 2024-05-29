@@ -1,8 +1,5 @@
-Flask
-flask-wtf
-pymysql
-wtforms
-werkzeug
-cryptography
-email_validator
-gunicorn==20.1.0
+Flask==2.0.2
+pymysql==1.0.2
+Werkzeug==2.0.2
+cryptography==36.0.1
+

@@ -29,6 +29,14 @@ h1 {
     animation: slideDown 1s ease-in-out;
 }
 
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    font-weight: 600;
+    animation: slideDown 1s ease-in-out;
+}
+
 form {
     display: flex;
     flex-direction: column;

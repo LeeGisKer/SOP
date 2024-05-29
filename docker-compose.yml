@@ -15,7 +15,7 @@ services:
 
   db:
     image: mysql:latest
-    restart: always
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: karaxl28
       MYSQL_DATABASE: password_manager
